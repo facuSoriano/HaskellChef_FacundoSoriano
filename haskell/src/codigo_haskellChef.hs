@@ -3,23 +3,23 @@ import Data.Foldable (Foldable(length))
 
 -- PARTE A --
 
-data Participantes = UnParticipante{
+data Participante = UnParticipante{
     nombre :: String,
-    trucos :: [Trucazos],
+    trucos :: [Trucazo],
     plato :: Plato
 }
 
-type Trucazos = (Plato -> Plato)
+type Trucazo = (Plato -> Plato)
 
 
 data Plato = UnPlato{
     dificultad :: Int,
-    componentes :: [Ingredientes]
+    componentes :: [Ingrediente]
 }deriving (Eq, Show)
 
-type Ingredientes = (String, Float)
+type Ingrediente = (String, Float)
 
-agregarIngrediente :: Ingredientes -> Plato -> Plato
+agregarIngrediente :: Ingrediente -> Plato -> Plato
 agregarIngrediente unIngrediente unPlato = unPlato {componentes = unIngrediente : componentes unPlato}
 
 endulzar :: Float -> Plato -> Plato
@@ -32,10 +32,10 @@ darSabor :: Float -> Float -> Plato -> Plato
 darSabor cantSal cantAzucar unPlato = endulzar cantAzucar . salar cantSal $ unPlato
 
 duplicarPorcion :: Plato -> Plato
-duplicarPorcion unPlato = unPlato {componentes = map duplicarCantidad (componentes unPlato)}
+duplicarPorcion unPlato = unPlato {componentes = map duplicarPeso (componentes unPlato)}
 
-duplicarCantidad :: Ingredientes -> Ingredientes
-duplicarCantidad (nombre , unPeso) = (nombre, unPeso * 2)
+duplicarPeso :: Ingrediente -> Ingrediente
+duplicarPeso (nombre , unPeso) = (nombre, unPeso * 2)
 
 simplificar :: Plato -> Plato
 simplificar unPlato
@@ -45,19 +45,22 @@ simplificar unPlato
 esComplejo :: Plato -> Bool
 esComplejo unPlato = (length (componentes unPlato) > 5) && (dificultad unPlato > 7)
 
-componentesConMasDe10Gramos :: Ingredientes -> Bool
+componentesConMasDe10Gramos :: Ingrediente -> Bool
 componentesConMasDe10Gramos (_, unPeso) = unPeso >= 10
 
+tieneIngredientes :: [String] -> Plato -> Bool
+tieneIngredientes ingredientesProhibidos unPlato = not $ any (`elem` map fst (componentes unPlato)) ingredientesProhibidos
+
 esVegano :: Plato -> Bool
-esVegano unPlato =  not (any (`elem` map fst (componentes unPlato)) ["carne", "huevos", "lacteos"]) 
+esVegano unPlato =  tieneIngredientes ["carne", "huevos", "lacteos"] unPlato
 
 esSinTacc :: Plato -> Bool
-esSinTacc unPlato = not ("harina" `elem` map fst (componentes unPlato))
+esSinTacc unPlato = tieneIngredientes ["harina"] unPlato
 
 noAptoHipertension :: Plato -> Bool
 noAptoHipertension unPlato = any masDe2GramosDeSal (componentes unPlato)
 
-masDe2GramosDeSal :: Ingredientes -> Bool
+masDe2GramosDeSal :: Ingrediente -> Bool
 masDe2GramosDeSal (ingrediente, unPeso) = ingrediente == "sal" && unPeso > 2
 
 -- PARTE B --
@@ -73,27 +76,27 @@ especialidadPepe = UnPlato{
     componentes = [sal, harina, cafe, galleta, helado, pinia]
 }
 
-pinia :: Ingredientes
+pinia :: Ingrediente
 pinia = ("pinia", 9)
 
-helado :: Ingredientes
+helado :: Ingrediente
 helado = ("helado", 8)
 
-galleta :: Ingredientes
+galleta :: Ingrediente
 galleta = ("galleta", 12)
 
-cafe :: Ingredientes
+cafe :: Ingrediente
 cafe = ("cafe", 12)
 
-harina :: Ingredientes
+harina :: Ingrediente
 harina = ("harina", 10)
 
-sal :: Ingredientes
+sal :: Ingrediente
 sal = ("sal", 3)
 
 -- PARTE C --
 
-cocinar :: Participantes -> Plato
+cocinar :: Participante -> Plato
 cocinar unParticipante = foldl (\plato truco -> truco plato) (plato unParticipante) (trucos unParticipante)
 
 esMejorQue :: Plato -> Plato -> Bool
@@ -108,12 +111,12 @@ tieneMenorPeso unPlato otroPlato = pesoTotal unPlato < pesoTotal otroPlato
 pesoTotal :: Plato -> Float
 pesoTotal unPlato = sum (map snd (componentes unPlato))
 
-mejorParticipante :: Participantes -> Participantes -> Participantes
+mejorParticipante :: Participante -> Participante -> Participante
 mejorParticipante unParticipante otroParticipante
     | cocinar unParticipante `esMejorQue` cocinar otroParticipante = unParticipante
     | otherwise = otroParticipante
 
-participanteEstrella :: [Participantes] -> String
+participanteEstrella :: [Participante] -> String
 participanteEstrella = nombre . foldl1 mejorParticipante 
 
 -- Participantes para probar el codigo --
@@ -128,7 +131,7 @@ especialidadJorge = UnPlato{
     componentes = [sal, harina, cafe, galleta, helado, pinia, chocolate]
 }
 
-chocolate :: Ingredientes
+chocolate :: Ingrediente
 chocolate = ("chocolate", 2)
 
 karina = UnParticipante{
