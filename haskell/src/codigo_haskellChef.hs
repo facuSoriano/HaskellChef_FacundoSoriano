@@ -144,3 +144,19 @@ especialidadKarina = UnPlato{
     dificultad = 9,
     componentes = [sal, harina, cafe, galleta, helado]
 }
+
+-- Parte D --
+
+--endulzar: va a añadir una cantidad de azucar al inicio de la lista pero nunca va a terminar de mostrar la lista
+--salara: lo mismo que endulzar
+--darSabor: añade la sal y el azucar al inicio de la lista pero no termina de mostrarla entera
+--duplicarPorcion: va a ir duplicando el peso de todos los ingredientes pero nunca va a terminar la lista
+--simplificar: no va a funcionar ya que va a tener que ejecutar esComplejo, pero no va a poder terminar de contar los
+-- componentes de un plato
+
+--esVegano: se va a quedar leyendo los ingredientes uno por uno, y nunca va a encontrar alguno que lo frene
+--esSinTacc: lo mismo que esVegano
+--esComplejo: no va a poder terminar de contar los componentes de un plato
+--noAptoHipertension: se va a quedar buscando el ingrediente con nombre sal eternamente
+
+--No se puede, porque nunca va a terminar de calcular el peso total del plato en la función pesoTotal
